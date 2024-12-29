@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
-import { StyleSheet, View, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Alert,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Button, Input } from "@rneui/themed";
 import { useAuth } from "../../../providers/AuthProvider";
+import Avatar from "../../../components/Avatar";
 
 export default function ProfileScreen() {
   const { session } = useAuth();
@@ -87,7 +94,23 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <View style={{ alignItems: "center" }}>
+        <Avatar
+          size={200}
+          url={avatarUrl}
+          onUpload={(url: string) => {
+            setAvatarUrl(url);
+            updateProfile({
+              username,
+              website,
+              avatar_url: url,
+              full_name: fullname,
+            });
+          }}
+        />
+      </View>
+
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
@@ -115,7 +138,7 @@ export default function ProfileScreen() {
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
-          title={loading ? "Loading ..." : "Update"}
+          title={loading ? <ActivityIndicator /> : "Save"}
           onPress={() =>
             updateProfile({
               username,
@@ -128,16 +151,18 @@ export default function ProfileScreen() {
         />
       </View>
 
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
+      <View style={[styles.verticallySpaced, styles.mt10]}>
+        <Button title="Logoff" onPress={() => supabase.auth.signOut()} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 10,
     padding: 12,
   },
   verticallySpaced: {
@@ -147,5 +172,9 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  mt10: {
+    paddingTop: 20,
+    paddingBottom: 40,
   },
 });
