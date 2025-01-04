@@ -21,4 +21,4 @@ Executar usando Expo no Codespace:
 npx expo start --tunnel
 ```
 
-https://www.youtube.com/watch?v=a_EdG30oGQI&t=582s
+
